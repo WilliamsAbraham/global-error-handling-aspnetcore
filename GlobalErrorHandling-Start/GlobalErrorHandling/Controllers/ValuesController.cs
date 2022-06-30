@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LoggerService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,22 @@ namespace GlobalErrorHandling.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                _logger.LogInfo("Fetching All students");
+                var students = DataManager.GetAllStudents();
+                _logger.LogInfo($"Returning {students.Count} students");
+                return Ok(students);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong: {ex}");
+                return StatusCode(500, "Internal Server Error");
+            }
+
+
+           
         }
     }
 }
